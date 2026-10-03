@@ -6,15 +6,26 @@ export function getDailyMissionsService(usuarioId) {
 
 export function updateMissionProgressService(usuarioId, missionId, incremento = 1) {
   const res = repo.incrementMissionProgress(usuarioId, missionId, incremento);
-  if (!res) throw new Error('Mission not found');
+  if (!res) {
+    const error = new Error('Mission not found');
+    error.status = 404;
+    error.code = 'MISSION_NOT_FOUND';
+    throw error;
+  }
   return res;
 }
 
-export function claimMissionService(missionId) {
-  const res = repo.claimMission(missionId);
+export function claimMissionService(usuarioId, missionId) {
+  const res = repo.claimMission(usuarioId, missionId);
   if (res.error) {
     const err = new Error(res.error);
-    err.status = 404;
+    const isMissing = res.error === 'Mission not found';
+    err.status = isMissing ? 404 : 409;
+    err.code = isMissing
+      ? 'MISSION_NOT_FOUND'
+      : res.error === 'Already claimed'
+        ? 'MISSION_ALREADY_CLAIMED'
+        : 'MISSION_NOT_COMPLETED';
     throw err;
   }
   return res;

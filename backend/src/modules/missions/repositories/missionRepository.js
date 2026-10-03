@@ -42,16 +42,14 @@ export function incrementMissionProgress(usuarioId, missionId, incremento = 1) {
   return { completada: m.completada, progresso: m.progresso, xpGanho };
 }
 
-export function claimMission(missionId) {
-  // find across all users
-  for (const [uid, missions] of userMissions.entries()) {
-    const m = missions.find((mm) => mm.mission_id === Number(missionId));
-    if (m) {
-      if (!m.completada) return { error: 'Mission not completed' };
-      if (m.coletada_em) return { error: 'Already claimed' };
-      m.coletada_em = new Date().toISOString();
-      return { xp_awarded: m.xp, updated: m };
-    }
+export function claimMission(usuarioId, missionId) {
+  const missions = userMissions.get(Number(usuarioId)) || [];
+  const m = missions.find((mission) => mission.mission_id === Number(missionId));
+  if (m) {
+    if (!m.completada) return { error: 'Mission not completed' };
+    if (m.coletada_em) return { error: 'Already claimed' };
+    m.coletada_em = new Date().toISOString();
+    return { xp_awarded: m.xp, updated: m };
   }
   return { error: 'Mission not found' };
 }

@@ -117,6 +117,44 @@ export const validateDiscoveryRequest = [
   handleValidationErrors
 ];
 
+export const validateDailyMissionsRequest = [
+  param('usuarioId')
+    .isInt({ min: 1 })
+    .withMessage('ID de usuário inválido')
+    .toInt(),
+
+  handleValidationErrors
+];
+
+export const validateMissionProgress = [
+  body('usuarioId')
+    .isInt({ min: 1 })
+    .withMessage('ID de usuário inválido')
+    .toInt(),
+
+  body('missionId')
+    .isInt({ min: 1 })
+    .withMessage('ID de missão inválido')
+    .toInt(),
+
+  body('incremento')
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage('Incremento deve ser um inteiro positivo')
+    .toInt(),
+
+  handleValidationErrors
+];
+
+export const validateMissionClaim = [
+  param('missionId')
+    .isInt({ min: 1 })
+    .withMessage('ID de missão inválido')
+    .toInt(),
+
+  handleValidationErrors
+];
+
 // ==========================================
 // VALIDAÇÃO: CHARACTER (Personagem)
 // ==========================================

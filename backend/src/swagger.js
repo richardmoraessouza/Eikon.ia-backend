@@ -170,6 +170,46 @@ const options = {
         DiscoveryCharacterList: {
           type: 'array',
           items: { $ref: '#/components/schemas/DiscoveryRecommendation' }
+        },
+        Mission: {
+          type: 'object',
+          properties: {
+            id: { type: 'integer' },
+            mission_id: { type: 'integer' },
+            usuario_id: { type: 'integer' },
+            progresso: { type: 'integer' },
+            completada: { type: 'boolean' },
+            coletada_em: { type: 'string', format: 'date-time', nullable: true },
+            data_atribuida: { type: 'string', format: 'date-time' },
+            tipo: { type: 'string', example: 'daily' },
+            titulo: { type: 'string' },
+            descricao: { type: 'string' },
+            objetivo: { type: 'integer' },
+            xp: { type: 'integer' }
+          }
+        },
+        MissionProgress: {
+          type: 'object',
+          properties: {
+            completada: { type: 'boolean' },
+            progresso: { type: 'integer' },
+            xpGanho: { type: 'integer' }
+          }
+        },
+        MissionClaim: {
+          type: 'object',
+          properties: {
+            xp_awarded: { type: 'integer' },
+            updated: { $ref: '#/components/schemas/Mission' }
+          }
+        },
+        MissionError: {
+          type: 'object',
+          properties: {
+            erro: { type: 'string' },
+            code: { type: 'string' },
+            stack: { type: 'string' }
+          }
         }
       },
       parameters: {
@@ -252,7 +292,8 @@ const options = {
     toGlobPath('modules', '**', 'routes', '*.js'),
     toGlobPath('modules', 'auth', 'authRouter.swagger.js'),
     toGlobPath('modules', 'characters', 'CharacterRouter.swagger.js'),
-    toGlobPath('modules', 'discovery', 'discoveryRouter.swagger.js')
+    toGlobPath('modules', 'discovery', 'discoveryRouter.swagger.js'),
+    toGlobPath('modules', 'missions', 'missionsRouter.swagger.js')
   ],
 };
 

@@ -120,6 +120,30 @@ export const validateUsuarioId = [
   handleValidationErrors
 ];
 
+const characterPublicIdValidation = param('publicId')
+  .trim()
+  .notEmpty()
+  .withMessage('Public ID do personagem é obrigatório');
+
+export const validatePublicId = [
+  characterPublicIdValidation,
+
+  handleValidationErrors
+];
+
+export const validateCharacterVisibility = [
+  characterPublicIdValidation,
+  body('is_public')
+    .exists()
+    .withMessage('O campo is_public é obrigatório')
+    .bail()
+    .isBoolean()
+    .withMessage('O campo is_public deve ser um booleano')
+    .toBoolean(),
+
+  handleValidationErrors
+];
+
 export const validateCharacterSearch = [
   query()
     .custom((value, { req }) => {

@@ -54,6 +54,108 @@ const options = {
             error: { type: 'string' },
             code: { type: 'string' }
           }
+        },
+        CharacterSummary: {
+          type: 'object',
+          properties: {
+            public_id: { type: 'string' },
+            nome: { type: 'string' },
+            fotoia: { type: 'string', nullable: true },
+            bio: { type: 'string', nullable: true },
+            tipo_personagem: { type: 'string', enum: ['ficcional', 'person'] },
+            usuario_id: { type: 'integer' },
+            descricao: { type: 'string', nullable: true },
+            is_public: { type: 'boolean' },
+            tags: { type: 'array', nullable: true, items: { type: 'string' } },
+            visualizacoes: { type: 'integer' },
+            criado_em: { type: 'string', format: 'date-time' }
+          }
+        },
+        Character: {
+          allOf: [
+            { $ref: '#/components/schemas/CharacterSummary' },
+            {
+              type: 'object',
+              properties: {
+                id: { type: 'integer', description: 'Internal character ID, returned only by endpoints that expose the full record.' },
+                genero: { type: 'string', nullable: true },
+                personalidade: { type: 'string', nullable: true },
+                historia: { type: 'string', nullable: true },
+                regras: { type: 'string', nullable: true },
+                obra: { type: 'string', nullable: true },
+                aparencia: { type: 'string', nullable: true },
+                gostos: { type: 'string', nullable: true },
+                desgostos: { type: 'string', nullable: true },
+                objetivos: { type: 'string', nullable: true },
+                primeiramensagem: { type: 'string', nullable: true },
+                relacaousuario: { type: 'string', nullable: true },
+                cenario: { type: 'string', nullable: true },
+                quick_prompt: { type: 'string', nullable: true },
+                is_modo_rapido: { type: 'boolean', nullable: true },
+                conversation_style: { type: 'string', nullable: true },
+                views: { type: 'integer' }
+              }
+            }
+          ]
+        },
+        CreateCharacter: {
+          allOf: [
+            { $ref: '#/components/schemas/CharacterWrite' },
+            {
+              type: 'object',
+              required: ['nome', 'tipo_personagem']
+            }
+          ]
+        },
+        CharacterWrite: {
+          type: 'object',
+          properties: {
+            nome: { type: 'string', minLength: 1, maxLength: 100 },
+            bio: { type: 'string', maxLength: 500 },
+            tipo_personagem: { type: 'string', enum: ['ficcional', 'person'] },
+            fotoia: { type: 'string', description: 'HTTP/HTTPS URL, relative path, or Base64 image data.' },
+            descricao: { type: 'string' },
+            genero: { type: 'string' },
+            personalidade: { type: 'string', maxLength: 1000 },
+            historia: { type: 'string' },
+            regras: { type: 'string' },
+            obra: { type: 'string' },
+            aparencia: { type: 'string' },
+            gostos: { type: 'string' },
+            desgostos: { type: 'string' },
+            objetivos: { type: 'string' },
+            primeiramensagem: { type: 'string' },
+            relacaousuario: { type: 'string' },
+            cenario: { type: 'string' },
+            quick_prompt: { type: 'string' },
+            is_modo_rapido: { type: 'boolean' },
+            conversation_style: { type: 'string' },
+            is_public: { type: 'boolean', default: true }
+          }
+        },
+        CharacterList: {
+          type: 'array',
+          items: { $ref: '#/components/schemas/CharacterSummary' }
+        }
+      },
+      parameters: {
+        CharacterId: {
+          name: 'id',
+          in: 'path',
+          required: true,
+          schema: { type: 'integer', minimum: 1 }
+        },
+        PublicId: {
+          name: 'publicId',
+          in: 'path',
+          required: true,
+          schema: { type: 'string', minLength: 1 }
+        },
+        UsuarioId: {
+          name: 'usuarioId',
+          in: 'path',
+          required: true,
+          schema: { type: 'integer', minimum: 1 }
         }
       },
       securitySchemes: {
@@ -67,12 +169,55 @@ const options = {
           in: 'cookie',
           name: 'token'
         }
+      },
+      responses: {
+        BadRequest: {
+          description: 'Request validation failed.',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/ValidationError' }
+            }
+          }
+        },
+        Unauthorized: {
+          description: 'Authentication is missing or invalid.',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+            }
+          }
+        },
+        Forbidden: {
+          description: 'The authenticated user does not have permission for this resource.',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+            }
+          }
+        },
+        NotFound: {
+          description: 'Character not found.',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+            }
+          }
+        },
+        ServerError: {
+          description: 'Unexpected server error.',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+            }
+          }
+        }
       }
     },
   },
   apis: [
     toGlobPath('modules', '**', 'routes', '*.js'),
-    toGlobPath('modules', 'auth', 'authRouter.swagger.js')
+    toGlobPath('modules', 'auth', 'authRouter.swagger.js'),
+    toGlobPath('modules', 'characters', 'CharacterRouter.swagger.js')
   ],
 };
 

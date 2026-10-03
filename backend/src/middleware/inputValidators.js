@@ -98,6 +98,25 @@ export const validateEmailParam = [
   handleValidationErrors
 ];
 
+export const validateDiscoveryRequest = [
+  param('usuarioId')
+    .isInt({ min: 1 })
+    .withMessage('ID de usuário inválido')
+    .bail(),
+
+  query('page')
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage('page deve ser um inteiro maior que zero'),
+
+  query('limit')
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage('limit deve ser um inteiro maior que zero'),
+
+  handleValidationErrors
+];
+
 // ==========================================
 // VALIDAÇÃO: CHARACTER (Personagem)
 // ==========================================

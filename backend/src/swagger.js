@@ -136,6 +136,40 @@ const options = {
         CharacterList: {
           type: 'array',
           items: { $ref: '#/components/schemas/CharacterSummary' }
+        },
+        DiscoveryPopularCharacter: {
+          type: 'object',
+          properties: {
+            public_id: { type: 'string' },
+            nome: { type: 'string' },
+            fotoia: { type: 'string', nullable: true },
+            tipo_personagem: { type: 'string', enum: ['ficcional', 'person'] },
+            usuario_id: { type: 'integer' },
+            bio: { type: 'string', nullable: true },
+            descricao: { type: 'string', nullable: true },
+            visualizacoes: { type: 'integer' },
+            tags: { type: 'array', nullable: true, items: { type: 'string' } },
+            quantidade_favoritos: { type: 'string', pattern: '^[0-9]+$' },
+            score_popularidade: { type: 'string', pattern: '^[0-9]+$' }
+          }
+        },
+        DiscoveryRecommendation: {
+          type: 'object',
+          properties: {
+            public_id: { type: 'string' },
+            nome: { type: 'string' },
+            fotoia: { type: 'string', nullable: true },
+            bio: { type: 'string', nullable: true },
+            usuario_id: { type: 'integer' },
+            visualizacoes: { type: 'integer' },
+            tags: { type: 'array', nullable: true, items: { type: 'string' } },
+            score_total: { type: 'string', pattern: '^[0-9]+$' },
+            quantidade_favoritos: { type: 'string', pattern: '^[0-9]+$' }
+          }
+        },
+        DiscoveryCharacterList: {
+          type: 'array',
+          items: { $ref: '#/components/schemas/DiscoveryRecommendation' }
         }
       },
       parameters: {
@@ -217,7 +251,8 @@ const options = {
   apis: [
     toGlobPath('modules', '**', 'routes', '*.js'),
     toGlobPath('modules', 'auth', 'authRouter.swagger.js'),
-    toGlobPath('modules', 'characters', 'CharacterRouter.swagger.js')
+    toGlobPath('modules', 'characters', 'CharacterRouter.swagger.js'),
+    toGlobPath('modules', 'discovery', 'discoveryRouter.swagger.js')
   ],
 };
 

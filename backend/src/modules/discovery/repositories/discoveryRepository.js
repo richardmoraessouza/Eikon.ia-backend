@@ -28,6 +28,7 @@ export const findPopularWeek = async () => {
     LEFT JOIN personia2.favoritos f ON p.id = f.personagem_id
 
     WHERE p.criado_em >= NOW() - INTERVAL '7 days'
+      AND p.is_public = true
 
     GROUP BY p.id, p.public_id, p.nome, p.fotoia, p.tipo_personagem, p.usuario_id, p.bio, p.descricao, p.visualizacoes, p.tags_slugs
 
@@ -56,6 +57,7 @@ export const getRecommendationsByWeight = async (usuarioId, page = 1, limit = 20
     FROM personia2.personagens p
     JOIN personia2.user_tag_scores uts ON uts.tag_slug = ANY(p.tags_slugs)
     WHERE uts.usuario_id = $1
+    AND p.is_public = true
     AND p.id NOT IN (
       SELECT personagem_id FROM personia2.recent_characters WHERE usuario_id = $1
     )

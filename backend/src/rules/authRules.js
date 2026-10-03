@@ -11,7 +11,7 @@ export const AUTH_RULES = {
     }
     return process.env.JWT_SECRET;
   })(),
-  JWT_EXPIRATION: '24h',
+  JWT_EXPIRATION: '7d',
   
   // Erros
   USER_NOT_FOUND_ERROR: 'USUARIO_NAO_ENCONTRADO',

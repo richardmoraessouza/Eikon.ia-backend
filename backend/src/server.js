@@ -49,7 +49,11 @@ if (!sessionSecret && process.env.NODE_ENV === 'production') {
 app.use(
   "/api-docs",
   swaggerUi.serve,
-  swaggerUi.setup(swaggerSpec)
+  swaggerUi.setup(swaggerSpec, {
+    swaggerOptions: {
+      withCredentials: true
+    }
+  })
 );
 
 // ==========================================
@@ -60,6 +64,10 @@ const allowedOrigins = corsOriginsEnv
   .split(',')
   .map(origin => origin.trim())
   .filter(Boolean);
+
+if (process.env.NODE_ENV !== 'production') {
+  allowedOrigins.push(`http://localhost:${PORT}`, `http://127.0.0.1:${PORT}`);
+}
 
 if (allowedOrigins.length === 0) {
   console.error('❌ Nenhuma origem CORS configurada em .env');
@@ -138,7 +146,7 @@ app.use(session({
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
-    sameSite: 'none',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     maxAge: 24 * 60 * 60 * 1000
   }
 }));

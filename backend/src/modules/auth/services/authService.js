@@ -37,7 +37,7 @@ export const markUserOfflineService = async (id) => {
 export const createUserService = async (data) => {
   const { gmail, nome, imgPerfil, username } = data;
   const normalizedUsername = validateUsername(username);
-  const nomeFinal = normalizedUsername || nome?.toString().trim();
+  const nomeFinal = nome?.toString().trim();
 
   const existingUser = await authRepository.findUserByUsername(normalizedUsername);
   if (existingUser) {
@@ -99,7 +99,7 @@ export const loginUserService = async (gmail) => {
     },
     AUTH_RULES.JWT_SECRET,
     {
-      expiresIn: '7d'
+      expiresIn: AUTH_RULES.JWT_EXPIRATION
     }
   );
 
@@ -127,11 +127,5 @@ export const getCurrentUserData = async (id) => {
 // =========================
 
 export const getUserByGmail = async (gmail) => {
-  const usuario = await authRepository.findUserPublicByGmail(gmail);
-
-  if (!usuario) {
-    throw new Error('USUARIO_NAO_ENCONTRADO');
-  }
-
-  return usuario;
+  return (await authRepository.findUserPublicByGmail(gmail)) || null;
 };

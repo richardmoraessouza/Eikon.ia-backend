@@ -51,17 +51,17 @@ export const validateRegister = [
     .isLength({ min: 1, max: 100 })
     .withMessage('Nome deve ter entre 1 e 100 caracteres')
     .customSanitizer(value => sanitizeText(value))  // ✅ Remove HTML/scripts
-    .matches(/^[a-zA-Z0-9\s\-àáäâèéëêìíïîòóöôùúüûñç]+$/i)
+    .matches(/^[\p{L} -]+$/u)
     .withMessage('Nome contém caracteres inválidos'),
   
   body('username')
     .trim()
     .notEmpty()
     .withMessage('Username é obrigatório')
-    .isLength({ min: 3, max: 30 })
-    .withMessage('Username deve ter entre 3 e 30 caracteres')
+    .isLength({ min: 3, max: 20 })
+    .withMessage('Username deve ter entre 3 e 20 caracteres')
     .customSanitizer(value => sanitizeText(value))
-    .matches(/^[a-zA-Z0-9._-]+$/)
+    .matches(/^[a-zA-Z0-9._]+$/)
     .withMessage('Username contém caracteres inválidos'),
 
   body('imgPerfil')
@@ -87,6 +87,14 @@ export const validateLogin = [
     .notEmpty()
     .withMessage('Credential do Google é obrigatório'),
   
+  handleValidationErrors
+];
+
+export const validateEmailParam = [
+  param('gmail')
+    .isEmail()
+    .withMessage('Endereço de email inválido'),
+
   handleValidationErrors
 ];
 

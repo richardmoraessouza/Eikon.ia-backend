@@ -11,7 +11,7 @@ const clearAuthCookie = (res) => {
   res.clearCookie('token', {
     httpOnly: true,
     secure: isProduction,
-    sameSite: 'none',
+    sameSite: isProduction ? 'none' : 'lax',
     path: '/'
   });
 };

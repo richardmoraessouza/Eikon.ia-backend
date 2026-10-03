@@ -7,7 +7,7 @@ const setAuthCookie = (res, token) => {
   res.cookie('token', token, {
     httpOnly: true,
     secure: isProduction,
-    sameSite: 'none',
+    sameSite: isProduction ? 'none' : 'lax',
     maxAge: 7 * 24 * 60 * 60 * 1000,
     path: '/'
   });
@@ -19,7 +19,7 @@ const clearAuthCookie = (res) => {
   res.clearCookie('token', {
     httpOnly: true,
     secure: isProduction,
-    sameSite: 'none',
+    sameSite: isProduction ? 'none' : 'lax',
     path: '/'
   });
 };
@@ -44,12 +44,6 @@ export const addUser = async (req, res) => {
 
     if (err.statusCode === 409) {
       return res.status(409).json({
-        error: err.message
-      });
-    }
-
-    if (err.statusCode === 401) {
-      return res.status(401).json({
         error: err.message
       });
     }
@@ -90,7 +84,7 @@ export const loginUser = async (req, res) => {
 
     if (err.message === 'USUARIO_NAO_ENCONTRADO') {
       return res.status(401).json({
-        error: 'Incorrect email or password'
+        error: 'No account is registered for this Google account'
       });
     }
 
@@ -113,12 +107,18 @@ export const loginUser = async (req, res) => {
 };
 
 export const logoutUser = async (req, res) => {
-  if (req.user?.id) {
-    await authService.markUserOfflineService(req.user.id);
-  }
+  try {
+    if (req.user?.id) {
+      await authService.markUserOfflineService(req.user.id);
+    }
 
-  clearAuthCookie(res);
-  return res.status(200).json({ sucesso: true });
+    clearAuthCookie(res);
+    return res.status(200).json({ sucesso: true });
+  } catch (err) {
+    console.error('Error logging out user:', err);
+    clearAuthCookie(res);
+    return res.status(500).json({ error: 'Error logging out user' });
+  }
 };
 
 export const getCurrentUser = async (req, res) => {

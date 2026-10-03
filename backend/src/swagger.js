@@ -325,7 +325,8 @@ const options = {
     toGlobPath('modules', 'discovery', 'discoveryRouter.swagger.js'),
     toGlobPath('modules', 'missions', 'missionsRouter.swagger.js'),
     toGlobPath('modules', 'ratings', 'ratingsRouter.swagger.js'),
-    toGlobPath('modules', 'social', 'socialRouter.swagger.js')
+    toGlobPath('modules', 'social', 'socialRouter.swagger.js'),
+    toGlobPath('modules', 'users', 'usersRouter.swagger.js')
   ],
 };
 

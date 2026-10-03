@@ -13,7 +13,7 @@ export const getUserById = async (req, res) => {
 
     console.error("Error searching user:", err);
 
-    if (err.message === 'USER_NOT_FOUND') {
+    if (err.message === 'User not found') {
       return res.status(404).json({
         error: "User not found"
       })
@@ -42,6 +42,10 @@ export const getNameUser = async (req, res) => {
   } catch (err) {
     console.error('Error searching user name:', err);
 
+    if (err.message === 'ID_INVALIDO') {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
     return res.status(500).json({ error: 'Error searching user name.' });
   }
 }
@@ -58,6 +62,10 @@ export const getOtherUser = async (req, res) => {
 
   } catch (err) {
     console.error('Error loading user data', err);
+
+    if (err.message === 'User not found') {
+      return res.status(404).json({ error: 'User not found' });
+    }
 
     return res.status(500).json({ message: 'Internal server error' });
   }

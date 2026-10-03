@@ -207,6 +207,15 @@ export const validateUsuarioId = [
   handleValidationErrors
 ];
 
+export const validateUserIdParam = [
+  param('id')
+    .isInt({ min: 1 })
+    .withMessage('ID do usuário inválido')
+    .toInt(),
+
+  handleValidationErrors
+];
+
 const characterPublicIdValidation = param('publicId')
   .trim()
   .notEmpty()

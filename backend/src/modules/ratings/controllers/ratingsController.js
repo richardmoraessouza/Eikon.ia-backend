@@ -1,4 +1,5 @@
 import * as ratingsService from '../services/ratingsService.js';
+import { getDataCharacterById } from '../../characters/services/CharacterService.js';
 
 /**
  * Get all available categories/tags
@@ -18,14 +19,22 @@ export const getTags = async (req, res) => {
  */
 export const reclassifyCharacter = async (req, res) => {
   const { characterId } = req.params;
-  const characterData = req.body;
 
   if (!characterId) {
     return res.status(400).json({ error: "Character ID is required." });
   }
 
   try {
-    const tagsIdentified = await ratingsService.handleAutoClassification(characterId, characterData);
+    const character = await getDataCharacterById(characterId);
+    if (!character) {
+      return res.status(404).json({ error: 'Character not found.' });
+    }
+
+    if (Number(character.usuario_id) !== Number(req.user?.id)) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+
+    const tagsIdentified = await ratingsService.handleAutoClassification(characterId, character);
     return res.status(200).json({ 
       message: "Character reclassified successfully!", 
       tags: tagsIdentified 
@@ -41,10 +50,8 @@ export const reclassifyCharacter = async (req, res) => {
  */
 export const getCharactersByCategory = async (req, res) => {
   const { slug } = req.params;
-  
-  // Increased default limit to 30 for seamless infinite scroll
-  const limit = parseInt(req.query.limit) || 15;   
-  const offset = parseInt(req.query.offset) || 0;  
+  const limit = Number(req.query.limit ?? 15);
+  const offset = Number(req.query.offset ?? 0);
 
   if (!slug) {
     return res.status(400).json({ error: "Category slug parameter is required." });

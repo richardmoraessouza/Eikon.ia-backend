@@ -138,7 +138,7 @@ export const handleAutoClassification = async (characterId, characterData) => {
     return [];
   } catch (error) {
     console.error("[Ratings Service] AI Classification error:", error.message);
-    return [];
+    throw error;
   }
 };
 
@@ -158,7 +158,7 @@ export const listAllTags = async () => {
  * ARRUMADO COM REDIS E SEM JOINS: Cacheia o feed por categoria baseado na nova coluna de alta performance
  */
 export const getCharactersByTag = async (tagSlug, limit = 20, offset = 0) => {
-  const cacheKey = `character:category:${tagSlug}:${limit}:${offset}`;
+  const cacheKey = `character:category:v2:${tagSlug}:${limit}:${offset}`;
   return await cacheService.cacheWithFallback(
     cacheKey,
     () => ratingsRepository.getCharactersByTagSlug(tagSlug, limit, offset),

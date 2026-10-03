@@ -155,6 +155,36 @@ export const validateMissionClaim = [
   handleValidationErrors
 ];
 
+export const validateRatingsCategoryRequest = [
+  param('slug')
+    .trim()
+    .matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/i)
+    .withMessage('Category slug is invalid'),
+
+  query('limit')
+    .optional()
+    .isInt({ min: 1, max: 50 })
+    .withMessage('limit must be an integer between 1 and 50')
+    .toInt(),
+
+  query('offset')
+    .optional()
+    .isInt({ min: 0 })
+    .withMessage('offset must be a non-negative integer')
+    .toInt(),
+
+  handleValidationErrors
+];
+
+export const validateRatingsCharacterId = [
+  param('characterId')
+    .isInt({ min: 1 })
+    .withMessage('Character ID must be a positive integer')
+    .toInt(),
+
+  handleValidationErrors
+];
+
 // ==========================================
 // VALIDAÇÃO: CHARACTER (Personagem)
 // ==========================================

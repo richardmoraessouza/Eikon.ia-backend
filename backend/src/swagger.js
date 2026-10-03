@@ -210,6 +210,36 @@ const options = {
             code: { type: 'string' },
             stack: { type: 'string' }
           }
+        },
+        RatingsTag: {
+          type: 'object',
+          properties: {
+            id: { type: 'integer' },
+            nome: { type: 'string' },
+            slug: { type: 'string' }
+          }
+        },
+        RatedCharacter: {
+          type: 'object',
+          properties: {
+            public_id: { type: 'string' },
+            nome: { type: 'string' },
+            fotoia: { type: 'string', nullable: true },
+            bio: { type: 'string', nullable: true },
+            descricao: { type: 'string', nullable: true },
+            visualizacoes: { type: 'integer' },
+            criado_em: { type: 'string', format: 'date-time' },
+            tags_slugs: {
+              type: 'array',
+              items: { type: 'string' }
+            }
+          }
+        },
+        RatingsError: {
+          type: 'object',
+          properties: {
+            error: { type: 'string' }
+          }
         }
       },
       parameters: {
@@ -293,7 +323,8 @@ const options = {
     toGlobPath('modules', 'auth', 'authRouter.swagger.js'),
     toGlobPath('modules', 'characters', 'CharacterRouter.swagger.js'),
     toGlobPath('modules', 'discovery', 'discoveryRouter.swagger.js'),
-    toGlobPath('modules', 'missions', 'missionsRouter.swagger.js')
+    toGlobPath('modules', 'missions', 'missionsRouter.swagger.js'),
+    toGlobPath('modules', 'ratings', 'ratingsRouter.swagger.js')
   ],
 };
 

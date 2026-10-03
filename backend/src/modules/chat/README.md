@@ -22,50 +22,32 @@ modules/chat_ia/
 
 ## Endpoints
 
-### POST `/chat/:personagemId`
-Chat com personagem
+As rotas abaixo são relativas ao prefixo `/chat` montado pelo servidor. IDs de personagem aceitam o ID interno ou `public_id`, salvo quando indicado.
 
-**Request Body:**
+| Método | Endpoint | Descrição |
+| --- | --- | --- |
+| `POST` | `/chat/:personagemId` | Envia uma mensagem e solicita resposta da IA. Requer login ou identificador anônimo. |
+| `GET` | `/chat/:personagemId/historico` | Busca histórico paginado (`limit`, `offset`). Requer login ou identificador anônimo. |
+| `GET` | `/chat/:personagemId/message/:messageId` | Busca uma mensagem do usuário atual. Requer login ou identificador anônimo. |
+| `DELETE` | `/:personagemId/limpar` | Limpa a memória da conversa. Atualmente não apaga mensagens persistidas. |
+| `GET` | `/:userId/:characterId/history` | Busca histórico para o usuário autenticado; `userId` deve corresponder à sessão. |
+| `POST` | `/:userId/:characterId/messages` | Salva mensagem sem chamar a IA; `userId` deve corresponder à sessão. |
+| `DELETE` | `/messages/:id` | Apaga uma mensagem do usuário atual. |
+| `PATCH` | `/messages/:id/pin` | Fixa ou desafixa uma mensagem do usuário atual. |
+| `GET` | `/chats/:chatId/pinned` | Lista mensagens fixadas no chat do usuário atual. |
+| `POST` | `/conversation-time` | Registra tempo de conversa; requer autenticação. |
+| `GET` | `/conversation-time/:characterId` | Consulta tempo de conversa; requer autenticação. |
+| `DELETE` | `/:publicId/mensagens` | Apaga mensagens persistidas da conversa atual com o personagem. |
+
+Para as rotas que aceitam acesso anônimo, envie `X-Anon-Id` ou `X-Guest-Id`; também é aceito `anonId` no corpo, query string ou cookie. Os detalhes dos parâmetros, schemas e respostas estão no Swagger.
+
+Exemplo de corpo para enviar mensagem:
+
 ```json
 {
-  "message": "Olá, tudo bem?"
-}
-```
-
-**Response:**
-```json
-{
-  "reply": "Oi! Tudo certo por aqui 😊",
-  "figurinha": null,
-  "success": true
-}
-```
-
-### GET `/chat/:personagemId/historico`
-Busca histórico de chat
-
-**Response:**
-```json
-[
-  {
-    "role": "user",
-    "text": "Olá, tudo bem?"
-  },
-  {
-    "role": "assistant",
-    "text": "Oi! Tudo certo por aqui 😊"
-  }
-]
-```
-
-### DELETE `/chat_ia/:personagemId/limpar` *(Requer autenticação)*
-Limpa histórico em cache
-
-**Response:**
-```json
-{
-  "success": true,
-  "message": "Memória limpa com sucesso"
+  "message": "Olá, tudo bem?",
+  "replyToId": 123,
+  "isVoiceCall": false
 }
 ```
 

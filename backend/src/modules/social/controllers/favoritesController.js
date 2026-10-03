@@ -6,7 +6,7 @@ import { updateTagScore } from '../../discovery/repositories/discoveryRepository
 // Uses JWT token for authentication
 // =========================
 export const toggleFavorites = async (req, res) => {
-  const usuarioId = Number(req.user.id); // From JWT token, not from URL!
+  const usuarioId = Number(req.user.id);
   const { personagem_id } = req.params;
 
   try {
@@ -15,8 +15,9 @@ export const toggleFavorites = async (req, res) => {
       personagem_id
     );
 
-    // Atualiza o score das tags do personagem
-    await updateTagScore(usuarioId, personagem_id, 'favorite');
+    if (result.favorited) {
+      await updateTagScore(usuarioId, personagem_id, 'favorite');
+    }
 
     return res.status(result.status).json(result);
 
@@ -33,17 +34,16 @@ export const toggleFavorites = async (req, res) => {
 // GET USER FAVORITES - Retrieve user's favorite list (public, read-only)
 // =========================
 export const getFavoritesUser = async (req, res) => {
-  
   const idParam = req.params.usuarioId || req.params.usuario_id;
   const usuarioIdNum = Number(idParam);
 
-  // SAFETY CHECK TO AVOID SENDING INVALID DATA TO THE DATABASE 
-  if (!idParam || isNaN(usuarioIdNum)) {
+  if (!idParam || !Number.isInteger(usuarioIdNum) || usuarioIdNum < 1) {
     return res.status(400).json({ error: 'Invalid user ID' });
   }
 
   try {
-    const favoritos = await socialService.getFavoritesUserService(usuarioIdNum);
+    const requesterId = req.user?.id ? Number(req.user.id) : null;
+    const favoritos = await socialService.getFavoritesUserService(usuarioIdNum, requesterId);
     return res.status(200).json(favoritos);
   } catch (error) {
     console.error('Error searching for favorites:', error);

@@ -49,7 +49,8 @@ export const addFavorite = async (userId, personId) => {
 
 // Get all favorites of user
 export const findFavoritesUserByUser = async (
-  usuarioId
+  usuarioId,
+  isOwner = false
 ) => {
   try {
     const query = `
@@ -63,9 +64,10 @@ export const findFavoritesUserByUser = async (
       INNER JOIN personia2.favoritos f
         ON f.personagem_id = p.id
       WHERE f.usuario_id = $1
+        AND (p.is_public = true OR $2 = true)
       ORDER BY p.nome
     `;
-    const result = await db.query(query, [usuarioId]);
+    const result = await db.query(query, [usuarioId, isOwner]);
     return result.rows;
   } catch (error) {
     console.error('[findFavoritesUserByUser] Error searching for favorites:', error);
@@ -85,5 +87,4 @@ export const findUserPrivacyFlags = async (usuarioId) => {
     throw error;
   }
 };
-
 

@@ -448,6 +448,15 @@ export const validateSocialAction = [
   handleValidationErrors
 ];
 
+export const validateFollowTarget = [
+  body('seguido_id')
+    .isInt({ min: 1 })
+    .withMessage('ID do usuário a seguir deve ser um inteiro positivo')
+    .toInt(),
+
+  handleValidationErrors
+];
+
 // Validar ID genérico (para followers/following)
 export const validateIdParam = [
   param('id')

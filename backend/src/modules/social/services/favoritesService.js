@@ -39,7 +39,7 @@ export const toggleFavoritesService = async (
     );
 
     // Invalida cache de favoritos do usuário
-    await cacheService.cacheDel(`favorite:user:${usuarioId}`);
+    await cacheService.cacheInvalidatePattern(`favorite:user:${usuarioId}:*`);
 
     return {
       status: 200,
@@ -55,7 +55,7 @@ export const toggleFavoritesService = async (
   );
 
   // Invalida cache de favoritos do usuário
-  await cacheService.cacheDel(`favorite:user:${usuarioId}`);
+  await cacheService.cacheInvalidatePattern(`favorite:user:${usuarioId}:*`);
 
   return {
     status: 201,
@@ -68,12 +68,21 @@ export const toggleFavoritesService = async (
 // GET USER FAVORITES (com cache)
 // =========================
 
-export const getFavoritesUserService = async (usuarioId) => {
-  const cacheKey = `favorite:user:${usuarioId}`;
+export const getFavoritesUserService = async (usuarioId, requesterId = null) => {
+  const isOwner = Number(requesterId) === Number(usuarioId);
+  const privacyFlags = isOwner
+    ? null
+    : await socialRepository.findUserPrivacyFlags(usuarioId);
+
+  if (!isOwner && privacyFlags?.hide_favorite_character) {
+    return [];
+  }
+
+  const cacheKey = `favorite:user:${usuarioId}:${isOwner ? 'owner' : 'public'}`;
   
   return await cacheService.cacheWithFallback(
     cacheKey,
-    () => socialRepository.findFavoritesUserByUser(usuarioId),
+    () => socialRepository.findFavoritesUserByUser(usuarioId, isOwner),
     CACHE_TTL.USER_FAVORITES
   );
 };
